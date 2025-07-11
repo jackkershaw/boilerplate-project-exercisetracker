@@ -29,7 +29,17 @@ const ExerciseSchema = new mongoose.Schema({
 
 const Exercise = mongoose.model("Exercise", ExerciseSchema);
 
-app.post("/api/users", (req, res) => {});
+app.post("/api/users", async (req, res) => {
+  try {
+    const userObj = new User({
+      username: req.body.username,
+    });
+    const user = await userObj.save();
+    res.json(user);
+  } catch (err) {
+    console.log(err);
+  }
+});
 
 app.use(cors());
 app.use(express.static("public"));
