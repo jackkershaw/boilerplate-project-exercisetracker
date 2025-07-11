@@ -49,3 +49,43 @@ app.post("/api/users", async (req, res) => {
     console.log(err);
   }
 });
+
+app.post("/api/users/:_id/exercises", async (req, res) => {
+  const id = req.params._id;
+  const { description, duration, date } = req.body;
+  try {
+    const user = await User.findById(id);
+    if (!user) {
+      res.send("could not find user");
+    } else {
+      const exerciseObj = new Exercise({
+        user_id: user._id,
+        description: description,
+        duration: duration,
+        date: date ? new Date(date) : new Date(),
+      });
+      const exercise = await exerciseObj.save();
+      res.json({
+        _id: user._id,
+        username: user.username,
+        description: exercise.description,
+        duration: exercise.duration,
+        date: new Date(exercise.date).toDateString(),
+      });
+    }
+  } catch (err) {
+    console.log(err);
+    res.send("error saving exercise");
+  }
+});
+
+app.get("/api/users", async (req, res) => {
+  const users = await User.find({}).select("_id username");
+  if (!users) {
+    res.send("no users found");
+  } else {
+    res.json(users);
+  }
+});
+
+app.get("");
